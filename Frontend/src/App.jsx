@@ -23,6 +23,19 @@ import OAuth2Callback from './pages/OAuth2Callback';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard';
+import { useAuth } from './context/AuthContext';
+
+function AdminRedirectHandler({ children }) {
+  const { isAuthenticated, user, loading } = useAuth();
+  const location = useLocation();
+  const isAdminPath = location.pathname.startsWith('/admin');
+  
+  if (!loading && isAuthenticated && user?.role === 'ADMIN' && !isAdminPath) {
+    return <Navigate to="/admin/dashboard" replace />;
+  }
+  
+  return children;
+}
 
 function App() {
   return (
@@ -39,11 +52,12 @@ function AppContent() {
   return (
     <AuthProvider>
       <CartProvider>
-        <div className="flex flex-col min-h-screen bg-dark-500">
-          {!isAdminPath && <Navbar />}
-          <main className="flex-1">
-            <Routes>
-              <Route path="/" element={<Home />} />
+        <AdminRedirectHandler>
+          <div className="flex flex-col min-h-screen bg-dark-500">
+            {!isAdminPath && <Navbar />}
+            <main className="flex-1">
+              <Routes>
+                <Route path="/" element={<Home />} />
                 <Route path="/shop" element={<Shop />} />
                 <Route path="/product/:productId" element={<ProductDetail />} />
                 <Route path="/login" element={<Login />} />
@@ -80,7 +94,8 @@ function AppContent() {
             </main>
             {!isAdminPath && <Footer />}
           </div>
-          <Toaster
+        </AdminRedirectHandler>
+        <Toaster
             position="top-right"
             toastOptions={{
               duration: 3000,

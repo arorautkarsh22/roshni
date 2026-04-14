@@ -56,9 +56,7 @@ const AdminLayout = ({ children }) => {
             </div>
           </div>
 
-          <Link to="/" className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-400 hover:text-white transition-colors">
-             <FiHome className="w-4 h-4" /> Exit to Store
-          </Link>
+
           <button onClick={logout} className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:text-red-400 transition-colors">
             <FiLogOut className="w-4 h-4" /> Sign Out
           </button>

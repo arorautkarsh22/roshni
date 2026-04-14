@@ -39,7 +39,7 @@ export const AuthProvider = ({ children }) => {
         setToken(tokenValue);
         setUser(userData);
         toast.success('Welcome back! 🎉');
-        return { success: true };
+        return { success: true, role: authData.role };
       }
       toast.error(data.message || 'Login failed');
       return { success: false, message: data.message };

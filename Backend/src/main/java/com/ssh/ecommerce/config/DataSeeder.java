@@ -42,21 +42,27 @@ public class DataSeeder implements CommandLineRunner {
             log.warn("⚠️ Database cleanup warning: {}", e.getMessage());
         }
 
-        // Seed admin user if not exists
-        if (!userRepository.existsByEmail("admin@roshnicreations.com")) {
-            User admin = User.builder()
+        // Ensure admin user exists and has ADMIN role
+        User admin = userRepository.findByEmail("admin@gmail.com").orElse(null);
+        if (admin == null) {
+            admin = User.builder()
                     .name("Admin")
-                    .email("admin@roshnicreations.com")
-                    .password(passwordEncoder.encode("admin123"))
+                    .email("admin@gmail.com")
                     .phone("9999999999")
-                    .role(Role.ADMIN)
                     .build();
+            admin.setPassword(passwordEncoder.encode("123456"));
+            admin.setRole(Role.ADMIN);
             admin = userRepository.save(admin);
 
             Cart adminCart = Cart.builder().user(admin).totalPrice(0.0).build();
             cartRepository.save(adminCart);
 
-            log.info("Admin user created — email: admin@roshnicreations.com, password: admin123");
+            log.info("Admin user created — email: admin@gmail.com, password: 123456");
+        } else {
+            admin.setPassword(passwordEncoder.encode("123456"));
+            admin.setRole(Role.ADMIN);
+            userRepository.save(admin);
+            log.info("Admin user updated with ADMIN role and new password.");
         }
 
         if (productRepository.count() > 0) {
