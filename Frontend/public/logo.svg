@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 450" fill="none">
+  <defs>
+    <linearGradient id="leafGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#D4A574;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#C49B6A;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="circleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#C49B6A;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#A07850;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background Circle -->
+  <circle cx="200" cy="180" r="120" stroke="url(#circleGrad)" stroke-width="1.5" fill="none" opacity="0.6"/>
+  <circle cx="200" cy="180" r="110" stroke="url(#circleGrad)" stroke-width="1" fill="none" opacity="0.4"/>
+  
+  <!-- Left Leaf Branch -->
+  <g transform="translate(80, 60)" fill="url(#leafGrad)" opacity="0.85">
+    <!-- Main stem -->
+    <path d="M60 240 Q55 200 50 160 Q45 120 55 80 Q60 60 65 40 Q68 25 70 15" stroke="#C49B6A" stroke-width="1.5" fill="none"/>
+    
+    <!-- Top flower bud -->
+    <ellipse cx="70" cy="10" rx="4" ry="7" transform="rotate(-10, 70, 10)" fill="#D4A574" opacity="0.7"/>
+    <ellipse cx="73" cy="8" rx="3" ry="6" transform="rotate(15, 73, 8)" fill="#D4A574" opacity="0.5"/>
+    <circle cx="71" cy="5" r="2" fill="#C49B6A" opacity="0.6"/>
+    
+    <!-- Leaves - left side (going down) -->
+    <ellipse cx="42" cy="60" rx="18" ry="8" transform="rotate(-40, 42, 60)" fill="url(#leafGrad)" opacity="0.8"/>
+    <ellipse cx="38" cy="95" rx="20" ry="9" transform="rotate(-35, 38, 95)" fill="url(#leafGrad)" opacity="0.75"/>
+    <ellipse cx="35" cy="130" rx="22" ry="9" transform="rotate(-30, 35, 130)" fill="url(#leafGrad)" opacity="0.7"/>
+    <ellipse cx="38" cy="165" rx="20" ry="8" transform="rotate(-25, 38, 165)" fill="url(#leafGrad)" opacity="0.65"/>
+    <ellipse cx="42" cy="195" rx="18" ry="7" transform="rotate(-20, 42, 195)" fill="url(#leafGrad)" opacity="0.6"/>
+    <ellipse cx="48" cy="220" rx="15" ry="6" transform="rotate(-15, 48, 220)" fill="url(#leafGrad)" opacity="0.55"/>
+    
+    <!-- Leaves - right side -->
+    <ellipse cx="72" cy="45" rx="14" ry="6" transform="rotate(30, 72, 45)" fill="url(#leafGrad)" opacity="0.6"/>
+    <ellipse cx="68" cy="78" rx="16" ry="7" transform="rotate(35, 68, 78)" fill="url(#leafGrad)" opacity="0.55"/>
+    <ellipse cx="65" cy="112" rx="15" ry="6" transform="rotate(30, 65, 112)" fill="url(#leafGrad)" opacity="0.5"/>
+    <ellipse cx="62" cy="145" rx="14" ry="6" transform="rotate(25, 62, 145)" fill="url(#leafGrad)" opacity="0.45"/>
+  </g>
+  
+  <!-- R letter - elegant script -->
+  <text x="170" y="200" font-family="Georgia, 'Times New Roman', serif" font-size="100" font-style="italic" font-weight="400" fill="#5C1A3A" opacity="0.9">R</text>
+  
+  <!-- C letter - elegant script -->
+  <text x="215" y="210" font-family="Georgia, 'Times New Roman', serif" font-size="85" font-style="italic" font-weight="400" fill="#5C1A3A" opacity="0.85">C</text>
+  
+  <!-- ROSHNI text -->
+  <text x="200" y="350" font-family="Georgia, 'Times New Roman', serif" font-size="38" font-weight="600" fill="#4A1A30" text-anchor="middle" letter-spacing="8">ROSHNI</text>
+  
+  <!-- CREATIONS text -->
+  <text x="200" y="385" font-family="Georgia, 'Times New Roman', serif" font-size="18" font-weight="400" fill="#4A1A30" text-anchor="middle" letter-spacing="12" opacity="0.8">CREATIONS</text>
+</svg>

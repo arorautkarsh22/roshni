@@ -1,0 +1,61 @@
+spring:
+  application:
+    name: ecommerce
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/roshni_creations?createDatabaseIfNotExist=true
+    username: root
+    password: 2200
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 
+            client-secret: 
+            scope: email, profile
+
+server:
+  port: 8080
+
+stripe:
+  secret:
+    key: 
+  publishable:
+    key: pk_test_51TLqel04ae230QnaPxIoJL3MpKJykZvM8kysbrA5m7K8O2z0RWD3BlxnrXLheZG7psxbrWcbSLDoLNeKg9OY6Nrh00H8Cb4rKj
+
+
+jwt:
+  secret: Um9zaG5pQ3JlYXRpb25zU2VjcmV0S2V5Rm9ySldUVG9rZW5IYWNrYXRob24yMDI2U3VwZXJTZWN1cmVLZXk=
+  expiration: 86400000
+
+app:
+  frontend:
+    url: http://localhost:5173
+
+spring.mail:
+  host: smtp.gmail.com
+  port: 587
+  username: keshavbansal039@gmail.com
+  password: ilbi yqol wnyf qmqz
+  properties:
+    mail:
+      smtp:
+        auth: true
+        starttls:
+          enabled: true
+          required: true
+        connectiontimeout: 5000
+        timeout: 5000
+        writetimeout: 5000
