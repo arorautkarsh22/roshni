@@ -29,10 +29,10 @@ const AdminDashboard = () => {
   if (error) {
     return (
       <div className="flex-1 flex items-center justify-center pt-20">
-         <div className="glass-card p-8 border-red-500/20 bg-red-500/5 text-center max-w-lg">
-            <FiAlertTriangle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-            <p className="text-white mb-2 font-medium">{error}</p>
-         </div>
+        <div className="glass-card p-8 border-red-500/20 bg-red-500/5 text-center max-w-lg">
+          <FiAlertTriangle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+          <p className="text-white mb-2 font-medium">{error}</p>
+        </div>
       </div>
     );
   }
@@ -75,7 +75,7 @@ const AdminDashboard = () => {
         {statCards.map((card, i) => (
           <div key={i} className="glass-card p-6 flex flex-col items-center justify-center text-center relative overflow-hidden group hover:border-gold-300/30 transition-all duration-300">
             <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-4 ${card.bg} group-hover:scale-110 transition-transform`}>
-               <card.icon className={`w-6 h-6 ${card.color}`} />
+              <card.icon className={`w-6 h-6 ${card.color}`} />
             </div>
             <h3 className="text-gray-400 text-sm font-medium uppercase tracking-wider mb-1">{card.title}</h3>
             <p className="text-white text-3xl font-heading font-bold">{card.value}</p>
@@ -84,13 +84,13 @@ const AdminDashboard = () => {
       </div>
 
       <div className="glass-card p-8 text-center flex flex-col items-center justify-center mt-12 py-20 border-white/5">
-         <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mb-4">
-             <FiShoppingBag className="w-8 h-8 text-gray-500" />
-         </div>
-         <h2 className="text-xl text-white font-medium mb-2">Detailed Datagrids Coming Soon</h2>
-         <p className="text-gray-400 max-w-md mx-auto">
-            The foundational Dashboard analytics are active. You can soon manage products, view specific orders, and modify individual customer accounts right from this panel.
-         </p>
+        <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mb-4">
+          <FiShoppingBag className="w-8 h-8 text-gray-500" />
+        </div>
+        <h2 className="text-xl text-white font-medium mb-2">Detailed Datagrids Coming Soon</h2>
+        <p className="text-gray-400 max-w-md mx-auto">
+          The foundational Dashboard analytics are active. You can soon manage products, view specific orders, and modify individual customer accounts right from this panel.
+        </p>
       </div>
     </div>
   );

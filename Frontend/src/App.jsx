@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'r
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
+import { ThemeProvider } from './context/ThemeContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -23,6 +24,10 @@ import OAuth2Callback from './pages/OAuth2Callback';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminOrders from './pages/admin/AdminOrders';
+import AdminInventory from './pages/admin/AdminInventory';
+import AdminCustomers from './pages/admin/AdminCustomers';
+import AdminEmails from './pages/admin/AdminEmails';
 import { useAuth } from './context/AuthContext';
 
 function AdminRedirectHandler({ children }) {
@@ -50,10 +55,11 @@ function AppContent() {
   const isAdminPath = location.pathname.startsWith('/admin');
 
   return (
+    <ThemeProvider>
     <AuthProvider>
       <CartProvider>
         <AdminRedirectHandler>
-          <div className="flex flex-col min-h-screen bg-dark-500">
+          <div className="flex flex-col min-h-screen theme-bg-page">
             {!isAdminPath && <Navbar />}
             <main className="flex-1">
               <Routes>
@@ -85,6 +91,10 @@ function AppContent() {
                     <AdminLayout>
                       <Routes>
                         <Route path="dashboard" element={<AdminDashboard />} />
+                        <Route path="orders" element={<AdminOrders />} />
+                        <Route path="inventory" element={<AdminInventory />} />
+                        <Route path="customers" element={<AdminCustomers />} />
+                        <Route path="emails" element={<AdminEmails />} />
                         <Route path="*" element={<Navigate to="dashboard" replace />} />
                       </Routes>
                     </AdminLayout>
@@ -116,6 +126,7 @@ function AppContent() {
           />
         </CartProvider>
       </AuthProvider>
+    </ThemeProvider>
     );
 }
 

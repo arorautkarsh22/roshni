@@ -2,13 +2,15 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import { FiShoppingCart, FiHeart, FiUser, FiMenu, FiX, FiSearch, FiLogOut, FiPackage } from 'react-icons/fi';
+import { useTheme } from '../context/ThemeContext';
+import { FiShoppingCart, FiHeart, FiUser, FiMenu, FiX, FiSearch, FiLogOut, FiPackage, FiSun, FiMoon } from 'react-icons/fi';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const { isAuthenticated, user, logout } = useAuth();
   const { cartCount } = useCart();
+  const { isDark, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
   const handleSearch = (e) => {
@@ -26,7 +28,7 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="sticky top-0 z-50 bg-dark-500/80 backdrop-blur-xl border-b border-white/5">
+    <nav className="sticky top-0 z-50 backdrop-blur-xl border-b theme-border" style={{ backgroundColor: isDark ? 'rgba(10,10,10,0.8)' : 'rgba(255,255,255,0.85)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
@@ -36,7 +38,7 @@ const Navbar = () => {
               alt="Roshni Creations"
               className="h-12 w-auto group-hover:scale-105 transition-transform duration-300 drop-shadow-lg"
             />
-            <span className="font-heading text-xl font-semibold text-white hidden sm:block">
+            <span className="font-heading text-xl font-semibold hidden sm:block" style={{ color: 'var(--text-primary)' }}>
               Roshni <span className="text-gold-300">Creations</span>
             </span>
           </Link>
@@ -47,7 +49,7 @@ const Navbar = () => {
               <Link
                 key={link.to}
                 to={link.to}
-                className="text-gray-300 hover:text-gold-300 transition-colors duration-300 text-sm font-medium relative
+                className="theme-text-secondary hover:text-gold-300 transition-colors duration-300 text-sm font-medium relative
                            after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold-300
                            hover:after:w-full after:transition-all after:duration-300"
               >
@@ -63,21 +65,32 @@ const Navbar = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search products..."
-              className="bg-white/5 border border-white/10 rounded-full pl-10 pr-4 py-2 text-sm text-white
+              className="bg-transparent border theme-border rounded-full pl-10 pr-4 py-2 text-sm
                          placeholder-gray-500 focus:outline-none focus:border-primary-500/50 w-48 lg:w-64
                          transition-all duration-300 focus:w-72"
+              style={{ color: 'var(--text-primary)' }}
             />
             <FiSearch className="absolute left-3 text-gray-500 w-4 h-4" />
           </form>
 
           {/* Actions */}
-          <div className="flex items-center gap-2 md:gap-4">
+          <div className="flex items-center gap-2 md:gap-3">
+            {/* Theme Toggle */}
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-lg transition-all duration-300 hover:bg-primary-500/10"
+              style={{ color: 'var(--text-muted)' }}
+              title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            >
+              {isDark ? <FiSun className="w-5 h-5" /> : <FiMoon className="w-5 h-5" />}
+            </button>
+
             {isAuthenticated ? (
               <>
-                <Link to="/wishlist" className="relative p-2 text-gray-300 hover:text-gold-300 transition-colors" title="Wishlist">
+                <Link to="/wishlist" className="relative p-2 theme-text-secondary hover:text-gold-300 transition-colors" title="Wishlist">
                   <FiHeart className="w-5 h-5" />
                 </Link>
-                <Link to="/cart" className="relative p-2 text-gray-300 hover:text-gold-300 transition-colors" title="Cart">
+                <Link to="/cart" className="relative p-2 theme-text-secondary hover:text-gold-300 transition-colors" title="Cart">
                   <FiShoppingCart className="w-5 h-5" />
                   {cartCount > 0 && (
                     <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary-500 text-white text-xs rounded-full
@@ -86,10 +99,10 @@ const Navbar = () => {
                     </span>
                   )}
                 </Link>
-                <Link to="/orders" className="relative p-2 text-gray-300 hover:text-gold-300 transition-colors hidden md:block" title="Orders">
+                <Link to="/orders" className="relative p-2 theme-text-secondary hover:text-gold-300 transition-colors hidden md:block" title="Orders">
                   <FiPackage className="w-5 h-5" />
                 </Link>
-                <Link to="/profile" className="relative p-2 text-gray-300 hover:text-gold-300 transition-colors" title="Profile">
+                <Link to="/profile" className="relative p-2 theme-text-secondary hover:text-gold-300 transition-colors" title="Profile">
                   <FiUser className="w-5 h-5" />
                 </Link>
                 <button onClick={logout} className="hidden md:flex p-2 text-gray-400 hover:text-red-400 transition-colors" title="Logout">
@@ -98,7 +111,7 @@ const Navbar = () => {
               </>
             ) : (
               <div className="flex items-center gap-2">
-                <Link to="/login" className="text-sm text-gray-300 hover:text-gold-300 transition-colors px-3 py-2">
+                <Link to="/login" className="text-sm theme-text-secondary hover:text-gold-300 transition-colors px-3 py-2">
                   Login
                 </Link>
                 <Link to="/register" className="btn-primary text-sm !px-4 !py-2">
@@ -108,7 +121,7 @@ const Navbar = () => {
             )}
 
             {/* Mobile menu */}
-            <button onClick={() => setIsOpen(!isOpen)} className="md:hidden p-2 text-gray-300">
+            <button onClick={() => setIsOpen(!isOpen)} className="md:hidden p-2" style={{ color: 'var(--text-secondary)' }}>
               {isOpen ? <FiX className="w-6 h-6" /> : <FiMenu className="w-6 h-6" />}
             </button>
           </div>
@@ -117,7 +130,7 @@ const Navbar = () => {
 
       {/* Mobile Dropdown */}
       {isOpen && (
-        <div className="md:hidden bg-dark-500/95 backdrop-blur-xl border-t border-white/5 animate-slide-down">
+        <div className="md:hidden backdrop-blur-xl border-t theme-border animate-slide-down" style={{ backgroundColor: isDark ? 'rgba(10,10,10,0.95)' : 'rgba(255,255,255,0.95)' }}>
           <div className="px-4 py-4 space-y-3">
             <form onSubmit={handleSearch} className="flex items-center relative">
               <input
@@ -134,7 +147,7 @@ const Navbar = () => {
                 key={link.to}
                 to={link.to}
                 onClick={() => setIsOpen(false)}
-                className="block py-2 px-3 text-gray-300 hover:text-gold-300 hover:bg-white/5 rounded-lg transition-all"
+                className="block py-2 px-3 theme-text-secondary hover:text-gold-300 hover:bg-primary-500/5 rounded-lg transition-all"
               >
                 {link.label}
               </Link>
