@@ -13,10 +13,56 @@
     scroll-behavior: smooth;
   }
 
+  /* ── Theme CSS Variables ── */
+  :root {
+    --bg-page: #fdf2f8;        /* primary-50 */
+    --bg-surface: #ffffff;
+    --bg-surface-hover: #fce7f3; /* primary-100 */
+    --bg-elevated: #fff5fa;
+    --bg-glass: rgba(255, 255, 255, 0.7);
+    --bg-glass-hover: rgba(255, 255, 255, 0.85);
+    --border-subtle: rgba(0, 0, 0, 0.08);
+    --border-glass: rgba(0, 0, 0, 0.06);
+    --text-primary: #1a1a2e;
+    --text-secondary: #4a4a5a;
+    --text-muted: #8a8a9a;
+    --scrollbar-track: #fdf2f8;
+    --scrollbar-thumb: #8B1A4A;
+    --scrollbar-hover: #D4A574;
+    
+    /* Gradient text colors for light mode */
+    --gradient-start: #8B1A4A; /* primary-500 */
+    --gradient-end: #D4A574;   /* gold-400 */
+  }
+
+  .dark {
+    --bg-page: #0a0a0a;
+    --bg-surface: #0f0f16;
+    --bg-surface-hover: #16162a;
+    --bg-elevated: #1a1a2e;
+    --bg-glass: rgba(255, 255, 255, 0.05);
+    --bg-glass-hover: rgba(255, 255, 255, 0.1);
+    --border-subtle: rgba(255, 255, 255, 0.05);
+    --border-glass: rgba(255, 255, 255, 0.1);
+    --text-primary: #ffffff;
+    --text-secondary: #d1d5db;
+    --text-muted: #9ca3af;
+    --scrollbar-track: #0a0a0a;
+    --scrollbar-thumb: #8B1A4A;
+    --scrollbar-hover: #D4A574;
+    
+    /* Gradient text colors for dark mode */
+    --gradient-start: #f9a8d4; /* primary-300 - much lighter for readability */
+    --gradient-end: #fcd34d;   /* gold-300 */
+  }
+
   body {
     font-family: 'Inter', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   /* Custom scrollbar */
@@ -24,55 +70,78 @@
     width: 8px;
   }
   ::-webkit-scrollbar-track {
-    background: #0a0a0a;
+    background: var(--scrollbar-track);
   }
   ::-webkit-scrollbar-thumb {
-    background: #8B1A4A;
+    background: var(--scrollbar-thumb);
     border-radius: 4px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #D4A574;
+    background: var(--scrollbar-hover);
   }
 }
 
 @layer components {
   .glass-card {
-    @apply bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl;
+    background: var(--bg-glass);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border-glass);
+    border-radius: 1rem;
+    transition: background 0.3s ease, border-color 0.3s ease;
   }
 
   .glass-card-hover {
-    @apply glass-card transition-all duration-300 hover:bg-white/10 hover:border-primary-500/30 hover:shadow-lg hover:shadow-primary-500/10;
+    @apply glass-card;
+    transition: all 0.3s ease;
+  }
+  .glass-card-hover:hover {
+    background: var(--bg-glass-hover);
+    border-color: rgba(139, 26, 74, 0.3);
+    box-shadow: 0 10px 15px -3px rgba(139, 26, 74, 0.1);
   }
 
   .btn-primary {
-    @apply bg-gradient-to-r from-primary-500 to-primary-600 text-white px-6 py-3 rounded-xl font-semibold
+    @apply bg-gradient-to-r from-primary-500 to-primary-600 px-6 py-3 rounded-xl font-semibold
            transition-all duration-300 hover:from-primary-600 hover:to-primary-700
            hover:shadow-lg hover:shadow-primary-500/30 active:scale-95;
+    color: #ffffff !important;
   }
 
   .btn-gold {
-    @apply bg-gradient-to-r from-gold-300 to-gold-500 text-dark-500 px-6 py-3 rounded-xl font-semibold
+    @apply bg-gradient-to-r from-gold-300 to-gold-500 px-6 py-3 rounded-xl font-semibold
            transition-all duration-300 hover:from-gold-400 hover:to-gold-600
            hover:shadow-lg hover:shadow-gold-300/30 active:scale-95;
+    color: #1a1a2e !important;
   }
 
   .btn-outline {
-    @apply border border-primary-500/50 text-primary-400 px-6 py-3 rounded-xl font-semibold
-           transition-all duration-300 hover:bg-primary-500/10 hover:border-primary-500 active:scale-95;
+    @apply bg-primary-500/15 border border-primary-500/30 text-primary-500 px-6 py-3 rounded-xl font-semibold
+           transition-all duration-300 hover:bg-primary-500/25 hover:border-primary-500/50 active:scale-95;
+  }
+
+  .dark .btn-outline {
+    @apply bg-primary-300/10 border-primary-300/30 text-primary-300
+           hover:bg-primary-300/20 hover:border-primary-300/50;
   }
 
   .input-field {
-    @apply w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white
+    @apply w-full rounded-xl px-4 py-3 
            placeholder-gray-500 focus:outline-none focus:border-primary-500/50
            focus:ring-2 focus:ring-primary-500/20 transition-all duration-300;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    color: var(--text-primary);
   }
 
   .section-heading {
-    @apply font-heading text-3xl md:text-4xl font-bold text-white;
+    @apply font-heading text-3xl md:text-4xl font-bold;
+    color: var(--text-primary);
   }
 
   .section-subheading {
-    @apply text-gray-400 text-lg mt-2;
+    @apply text-lg mt-2;
+    color: var(--text-muted);
   }
 
   .badge {
@@ -86,11 +155,44 @@
   .badge-gold {
     @apply badge bg-gold-300/20 text-gold-300;
   }
+
+  /* ── Theme-aware Surface Utilities ── */
+  .theme-bg-page {
+    background-color: var(--bg-page);
+    transition: background-color 0.3s ease;
+  }
+
+  .theme-bg-surface {
+    background-color: var(--bg-surface);
+    transition: background-color 0.3s ease;
+  }
+
+  .theme-bg-elevated {
+    background-color: var(--bg-elevated);
+    transition: background-color 0.3s ease;
+  }
+
+  .theme-text {
+    color: var(--text-primary);
+  }
+
+  .theme-text-secondary {
+    color: var(--text-secondary);
+  }
+
+  .theme-text-muted {
+    color: var(--text-muted);
+  }
+
+  .theme-border {
+    border-color: var(--border-subtle);
+  }
 }
 
 @layer utilities {
   .text-gradient {
-    @apply bg-gradient-to-r from-primary-500 via-gold-300 to-primary-500 bg-clip-text text-transparent;
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
   }
 
   .animate-in {
@@ -109,3 +211,97 @@
     }
   }
 }
+
+/* ──────────────────────────────────────────────────────
+   Light-mode overrides for hardcoded dark-theme classes
+   Only active when .dark is NOT on <html>
+   ────────────────────────────────────────────────────── */
+
+/* Text colors — remap "white" text to dark, but NOT inside filled buttons or badges */
+html:not(.dark) .text-white {
+  color: #1a1a2e !important;
+}
+html:not(.dark) .bg-primary-500 .text-white,
+html:not(.dark) .bg-primary-500\/20 .text-white,
+html:not(.dark) [class*="bg-gradient"] .text-white {
+  color: #ffffff !important;
+}
+
+/* Gray text shades — darken for readability */
+html:not(.dark) .text-gray-300 {
+  color: #3a3a4a !important;
+}
+html:not(.dark) .text-gray-400 {
+  color: #4a4a5a !important;
+}
+html:not(.dark) .text-gray-500 {
+  color: #6a6a7a !important;
+}
+html:not(.dark) .text-gray-600 {
+  color: #7a7a8a !important;
+}
+
+/* Placeholder text */
+html:not(.dark) .placeholder-gray-500::placeholder {
+  color: #8a8a9a !important;
+}
+
+/* Background overrides — translucent whites → translucent darks */
+html:not(.dark) .bg-white\/5 {
+  background-color: rgba(0, 0, 0, 0.03) !important;
+}
+html:not(.dark) .bg-white\/\[0\.03\] {
+  background-color: rgba(0, 0, 0, 0.02) !important;
+}
+html:not(.dark) .hover\:bg-white\/5:hover {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+}
+html:not(.dark) .hover\:bg-white\/\[0\.03\]:hover {
+  background-color: rgba(0, 0, 0, 0.02) !important;
+}
+html:not(.dark) .bg-dark-500 {
+  background-color: var(--bg-page) !important;
+}
+html:not(.dark) .bg-dark-50 {
+  background-color: var(--bg-surface) !important;
+}
+html:not(.dark) .bg-dark-400 {
+  background-color: var(--bg-surface) !important;
+}
+html:not(.dark) .bg-dark-400\/50 {
+  background-color: var(--bg-glass) !important;
+}
+html:not(.dark) .bg-\[\#0f0f16\] {
+  background-color: var(--bg-page) !important;
+}
+html:not(.dark) .bg-dark-500\/80 {
+  background-color: rgba(255, 255, 255, 0.85) !important;
+}
+html:not(.dark) .bg-dark-500\/95 {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* Border overrides */
+html:not(.dark) .border-white\/5 {
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+html:not(.dark) .border-white\/10 {
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+html:not(.dark) .border-white\/20 {
+  border-color: rgba(0, 0, 0, 0.12) !important;
+}
+html:not(.dark) .hover\:border-gold-300\/30:hover {
+  border-color: rgba(212, 165, 116, 0.4) !important;
+}
+
+/* Divide color */
+html:not(.dark) .divide-white\/5 > * + * {
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Ring overrides */
+html:not(.dark) .ring-white\/10 {
+  --tw-ring-color: rgba(0, 0, 0, 0.08) !important;
+}
+

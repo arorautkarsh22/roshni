@@ -22,8 +22,8 @@ spring:
       client:
         registration:
           google:
-            client-id: 
-            client-secret:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
             scope: email, profile
 
 server:
@@ -31,13 +31,13 @@ server:
 
 stripe:
   secret:
-    key: 
+    key: ${STRIPE_SECRET_KEY}
   publishable:
-    key: pk_test_51TLqel04ae230QnaPxIoJL3MpKJykZvM8kysbrA5m7K8O2z0RWD3BlxnrXLheZG7psxbrWcbSLDoLNeKg9OY6Nrh00H8Cb4rKj
+    key: ${STRIPE_PUBLISHABLE_KEY}
 
 
 jwt:
-  secret: Um9zaG5pQ3JlYXRpb25zU2VjcmV0S2V5Rm9ySldUVG9rZW5IYWNrYXRob24yMDI2U3VwZXJTZWN1cmVLZXk=
+  secret: ${JWT_SECRET}
   expiration: 86400000
 
 app:
@@ -47,8 +47,8 @@ app:
 spring.mail:
   host: smtp.gmail.com
   port: 587
-  username: keshavbansal039@gmail.com
-  password: ilbi yqol wnyf qmqz
+  username: ${MAIL_USERNAME}
+  password: ${MAIL_PASSWORD}
   properties:
     mail:
       smtp:

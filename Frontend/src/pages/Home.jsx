@@ -43,18 +43,18 @@ const Home = () => {
       <HeroBanner />
 
       {/* Features Strip */}
-      <section className="border-y border-white/5 bg-dark-50/50">
+      <section className="border-y theme-border theme-bg-surface">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {features.map((f) => (
               <div key={f.title} className="flex items-center gap-3 group">
                 <div className="w-12 h-12 rounded-xl bg-primary-500/10 flex items-center justify-center
-                                group-hover:bg-primary-500/20 transition-colors">
-                  <f.icon className="w-5 h-5 text-primary-400" />
+                                group-hover:bg-primary-500/20 transition-colors border border-primary-500/10">
+                  <f.icon className="w-5 h-5 text-primary-500" />
                 </div>
                 <div>
-                  <p className="text-white text-sm font-medium">{f.title}</p>
-                  <p className="text-gray-500 text-xs">{f.desc}</p>
+                  <p className="theme-text text-sm font-medium">{f.title}</p>
+                  <p className="theme-text-muted text-xs">{f.desc}</p>
                 </div>
               </div>
             ))}
@@ -85,7 +85,7 @@ const Home = () => {
       )}
 
       {/* Featured Products */}
-      <section className="py-20 bg-dark-50/30">
+      <section className="py-20 theme-bg-surface border-t theme-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-end justify-between mb-10">
             <div>
@@ -148,7 +148,7 @@ const Home = () => {
 
       {/* CTA */}
       <section className="py-20 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-primary-500/10 to-gold-300/10" />
+        <div className="absolute inset-0 bg-gradient-to-r from-primary-300/20 to-primary-200/20" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
           <h2 className="font-heading text-4xl md:text-5xl font-bold text-white mb-4">
             Join the <span className="text-gradient">Roshni Family</span>
