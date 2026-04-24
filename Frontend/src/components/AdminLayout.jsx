@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-import { FiHome, FiGrid, FiBox, FiUsers, FiShoppingBag, FiLogOut, FiMail, FiSun, FiMoon } from 'react-icons/fi';
+import { FiGrid, FiBox, FiUsers, FiShoppingBag, FiLogOut, FiSun, FiMoon } from 'react-icons/fi';
 
 const AdminLayout = ({ children }) => {
   const { pathname } = useLocation();
@@ -13,7 +13,6 @@ const AdminLayout = ({ children }) => {
     { label: 'Orders', path: '/admin/orders', icon: FiShoppingBag },
     { label: 'Inventory', path: '/admin/inventory', icon: FiBox },
     { label: 'Customers', path: '/admin/customers', icon: FiUsers },
-    { label: 'System Emails', path: '/admin/emails', icon: FiMail },
   ];
 
   return (

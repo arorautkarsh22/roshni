@@ -27,7 +27,6 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminOrders from './pages/admin/AdminOrders';
 import AdminInventory from './pages/admin/AdminInventory';
 import AdminCustomers from './pages/admin/AdminCustomers';
-import AdminEmails from './pages/admin/AdminEmails';
 import { useAuth } from './context/AuthContext';
 
 function AdminRedirectHandler({ children }) {
@@ -94,7 +93,6 @@ function AppContent() {
                         <Route path="orders" element={<AdminOrders />} />
                         <Route path="inventory" element={<AdminInventory />} />
                         <Route path="customers" element={<AdminCustomers />} />
-                        <Route path="emails" element={<AdminEmails />} />
                         <Route path="*" element={<Navigate to="dashboard" replace />} />
                       </Routes>
                     </AdminLayout>

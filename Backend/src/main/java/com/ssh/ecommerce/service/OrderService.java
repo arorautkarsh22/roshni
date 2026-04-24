@@ -11,5 +11,6 @@ public interface OrderService {
     OrderResponse getByOrderId(String orderId);
     List<OrderResponse> getByUser(Long userId);
     OrderResponse updateStatus(String orderId, OrderStatus status);
+    OrderResponse shipOrder(String orderId, String trackingNumber);
     List<OrderResponse> getAll();
 }

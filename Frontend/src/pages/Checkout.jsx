@@ -5,9 +5,10 @@ import { useCart } from '../context/CartContext';
 import { getUserAddresses, addAddress } from '../api/addressService';
 import { createOrder } from '../api/orderService';
 import { createPaymentIntent, confirmPayment } from '../api/paymentService';
+import { validateDiscountCode, applyDiscountCode } from '../api/discountService';
 import AddressCard from '../components/AddressCard';
 import Loader from '../components/Loader';
-import { FiPlus, FiCreditCard, FiCheck, FiX } from 'react-icons/fi';
+import { FiPlus, FiCreditCard, FiCheck, FiX, FiTag } from 'react-icons/fi';
 import StripePaymentModal from '../components/StripePaymentModal';
 import toast from 'react-hot-toast';
 
@@ -26,6 +27,11 @@ const Checkout = () => {
   const [newAddress, setNewAddress] = useState({
     fullName: '', addressLine1: '', city: '', state: '', pincode: '', phone: ''
   });
+  
+  // Discount Code State
+  const [discountCode, setDiscountCode] = useState('');
+  const [appliedDiscount, setAppliedDiscount] = useState(null); // { code, percent }
+  const [validatingCode, setValidatingCode] = useState(false);
 
   useEffect(() => {
     if (cartItems.length === 0) {
@@ -61,6 +67,32 @@ const Checkout = () => {
     }
   };
 
+  const handleApplyDiscount = async () => {
+    if (!discountCode.trim()) return;
+    setValidatingCode(true);
+    try {
+      const res = await validateDiscountCode(discountCode);
+      const data = res.data?.data;
+      if (data && data.valid) {
+        setAppliedDiscount({ code: data.code, percent: data.discountPercent });
+        toast.success(data.message || `${data.discountPercent}% discount applied!`);
+      } else {
+        toast.error(data?.message || 'Invalid or expired code.');
+        setAppliedDiscount(null);
+      }
+    } catch (err) {
+      toast.error('Failed to validate code.');
+    } finally {
+      setValidatingCode(false);
+    }
+  };
+
+  const removeDiscount = () => {
+    setAppliedDiscount(null);
+    setDiscountCode('');
+    toast.success('Discount removed.');
+  };
+
   const handlePlaceOrder = async () => {
     if (!selectedAddress) {
       toast.error('Please select a delivery address');
@@ -80,6 +112,15 @@ const Checkout = () => {
       }
 
       const orderUuid = res.data.data.orderId; // String UUID expected by Payment Service
+
+      // Apply discount code in backend if valid
+      if (appliedDiscount) {
+        try {
+          await applyDiscountCode(appliedDiscount.code);
+        } catch (err) {
+          console.error("Failed to mark discount code as used", err);
+        }
+      }
 
       // If COD, we're completely done
       if (paymentMethod === 'COD') {
@@ -127,6 +168,8 @@ const Checkout = () => {
   };
 
   const shipping = cartTotal >= 999 ? 0 : 99;
+  const discountAmount = appliedDiscount ? Math.round(cartTotal * (appliedDiscount.percent / 100)) : 0;
+  const finalTotal = cartTotal - discountAmount + shipping;
 
   if (loading) return <Loader size="lg" text="Loading checkout..." />;
 
@@ -261,11 +304,50 @@ const Checkout = () => {
                 ))}
               </div>
 
-              <div className="border-t border-white/5 pt-3 space-y-2">
+              <div className="border-t border-white/5 pt-3 space-y-3">
+                {/* Discount Code Input */}
+                {!appliedDiscount ? (
+                  <div className="flex gap-2">
+                    <div className="relative flex-1">
+                      <FiTag className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4" />
+                      <input
+                        type="text"
+                        placeholder="Discount Code"
+                        value={discountCode}
+                        onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
+                        className="w-full bg-white/5 border border-white/10 rounded-xl pl-9 pr-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-gold-300/50 uppercase"
+                      />
+                    </div>
+                    <button 
+                      onClick={handleApplyDiscount}
+                      disabled={!discountCode || validatingCode}
+                      className="px-4 rounded-xl bg-white/5 text-sm font-medium hover:bg-white/10 disabled:opacity-50 transition-colors"
+                    >
+                      {validatingCode ? '...' : 'Apply'}
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-between bg-gold-300/10 border border-gold-300/20 rounded-xl px-3 py-2">
+                    <div className="flex items-center gap-2 text-gold-300 text-sm font-medium">
+                      <FiCheck className="w-4 h-4" />
+                      <span>{appliedDiscount.code} ({appliedDiscount.percent}%)</span>
+                    </div>
+                    <button onClick={removeDiscount} className="text-gray-500 hover:text-white">
+                      <FiX className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-400">Subtotal</span>
                   <span className="text-white">₹{cartTotal.toLocaleString('en-IN')}</span>
                 </div>
+                {appliedDiscount && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">Discount ({appliedDiscount.percent}%)</span>
+                    <span className="text-gold-300">-₹{discountAmount.toLocaleString('en-IN')}</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-400">Shipping</span>
                   <span className="text-green-400">{shipping === 0 ? 'Free' : `₹${shipping}`}</span>
@@ -273,7 +355,7 @@ const Checkout = () => {
                 <div className="border-t border-white/5 pt-2 flex justify-between">
                   <span className="text-white font-semibold">Total</span>
                   <span className="text-gold-300 font-heading text-xl font-bold">
-                    ₹{(cartTotal + shipping).toLocaleString('en-IN')}
+                    ₹{finalTotal.toLocaleString('en-IN')}
                   </span>
                 </div>
               </div>

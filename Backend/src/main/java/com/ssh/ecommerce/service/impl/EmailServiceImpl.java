@@ -129,6 +129,79 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
+    @Async
+    @Transactional(readOnly = true)
+    public void sendShippingNotification(Long id, String trackingNumber) {
+        Order order = orderRepository.findById(id).orElse(null);
+        if (order == null) return;
+
+        String trackNo = trackingNumber != null ? trackingNumber : (order.getTrackingNumber() != null ? order.getTrackingNumber() : "N/A");
+        String subject = "Your order is on its way! 🚚 #" + order.getOrderId();
+
+        String body = "Dear " + order.getUser().getName() + ",\n\n" +
+                "Great news! Your order has been shipped! 📦\n\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "SHIPPING DETAILS\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "Order ID: " + order.getOrderId() + "\n" +
+                "Tracking Number: " + trackNo + "\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                "Use your tracking number to track your parcel with the courier service.\n\n" +
+                "With love,\nRoshni Creations ✨";
+
+        saveAndSendEmail(order.getUser().getEmail(), subject, body,
+                "ORDER_SHIPPED", order.getOrderId());
+    }
+
+    @Override
+    @Async
+    @Transactional(readOnly = true)
+    public void sendDeliveryNotification(Long id) {
+        Order order = orderRepository.findById(id).orElse(null);
+        if (order == null) return;
+
+        String subject = "Your order has been delivered! 🎁 #" + order.getOrderId();
+
+        String body = "Dear " + order.getUser().getName() + ",\n\n" +
+                "Your order has been successfully delivered! 🎊\n\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "ORDER DETAILS\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "Order ID: " + order.getOrderId() + "\n" +
+                "Total Amount: ₹" + String.format("%.2f", order.getTotalAmount()) + "\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                "We hope you love your new jewellery from Roshni Creations! ✨\n\n" +
+                "If you have a moment, we'd love to hear your feedback on our website.\n\n" +
+                "Happy Shopping! 🛍️\n\n" +
+                "With love,\nRoshni Creations ✨";
+
+        saveAndSendEmail(order.getUser().getEmail(), subject, body,
+                "ORDER_DELIVERED", order.getOrderId());
+    }
+
+    @Override
+    @Async
+    public void sendDiscountCode(String toEmail, String customerName, String code,
+                                  int discountPercent, String expiresAt) {
+        String subject = "🎁 You've earned a special discount! — Roshni Creations";
+
+        String body = "Dear " + customerName + ",\n\n" +
+                "Thank you for being one of our most valued customers! 🌟\n\n" +
+                "As a token of our appreciation, we're sending you an exclusive discount:\n\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "   YOUR DISCOUNT CODE: " + code + "\n" +
+                "   DISCOUNT: " + discountPercent + "% OFF your entire order\n" +
+                "   VALID UNTIL: " + expiresAt + "\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                "Simply enter this code at checkout to redeem your discount.\n" +
+                "This code is valid for one-time use only.\n\n" +
+                "Happy Shopping! 🛍️\n\n" +
+                "With love,\nRoshni Creations ✨";
+
+        saveAndSendEmail(toEmail, subject, body, "DISCOUNT_CODE", code);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public List<Map<String, Object>> getAllNotifications() {
         return emailNotificationRepository.findAllByOrderBySentAtDesc().stream()

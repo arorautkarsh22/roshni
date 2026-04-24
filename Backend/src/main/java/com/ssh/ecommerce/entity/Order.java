@@ -56,6 +56,8 @@ public class Order {
     @Builder.Default
     private List<OrderItem> orderItems = new ArrayList<>();
 
+    private String trackingNumber;
+
     @Column(nullable = false, updatable = false)
     @Builder.Default
     private LocalDateTime orderDate = LocalDateTime.now();

@@ -27,6 +27,15 @@ public class AdminServiceImpl implements AdminService {
     private final PaymentRepository paymentRepository;
 
     @Override
+    @Transactional
+    public void updateProductStock(String productId, int additionalStock) {
+        Product product = productRepository.findByProductId(productId)
+                .orElseThrow(() -> new com.ssh.ecommerce.exception.ResourceNotFoundException("Product", "productId", productId));
+        product.setStock(product.getStock() + additionalStock);
+        productRepository.save(product);
+    }
+
+    @Override
     public DashboardStatsResponse getDashboardStats() {
         List<User> allUsers = userRepository.findAll();
         List<Product> allProducts = productRepository.findAll();

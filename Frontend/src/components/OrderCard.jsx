@@ -1,4 +1,4 @@
-import { FiPackage, FiChevronRight } from 'react-icons/fi';
+import { FiPackage, FiTruck } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 
 const statusColors = {
@@ -11,7 +11,7 @@ const statusColors = {
 };
 
 const OrderCard = ({ order }) => {
-  const status = order.status || 'PENDING';
+  const status = order.orderStatus || order.status || 'PENDING';
 
   return (
     <div className="glass-card-hover p-6 animate-fade-in">
@@ -62,6 +62,13 @@ const OrderCard = ({ order }) => {
               </div>
             )}
           </div>
+        </div>
+      )}
+      {order.trackingNumber && (
+        <div className="mt-3 pt-3 border-t border-white/5 flex items-center gap-2">
+          <FiTruck className="w-3.5 h-3.5 text-indigo-400 flex-shrink-0" />
+          <span className="text-gray-400 text-xs">Tracking:</span>
+          <span className="text-indigo-400 font-mono text-xs bg-indigo-500/10 px-2 py-0.5 rounded">{order.trackingNumber}</span>
         </div>
       )}
     </div>

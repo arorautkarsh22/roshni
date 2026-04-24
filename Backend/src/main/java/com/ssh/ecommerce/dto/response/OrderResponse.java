@@ -21,6 +21,7 @@ public class OrderResponse {
     private String paymentMethod;
     private String paymentStatus;
     private String razorpayOrderId;  // For frontend payment tracking
+    private String trackingNumber;
     private List<OrderItemResponse> items;
     private LocalDateTime orderDate;
 }

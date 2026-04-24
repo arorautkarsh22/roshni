@@ -2,6 +2,7 @@ package com.ssh.ecommerce.controller;
 
 import com.ssh.ecommerce.dto.ApiResponse;
 import com.ssh.ecommerce.dto.request.OrderRequest;
+import com.ssh.ecommerce.dto.request.ShipOrderRequest;
 import com.ssh.ecommerce.dto.response.OrderResponse;
 import com.ssh.ecommerce.entity.enums.OrderStatus;
 import com.ssh.ecommerce.service.OrderService;
@@ -49,6 +50,13 @@ public class OrderController {
                                                                      @RequestParam OrderStatus status) {
         OrderResponse response = orderService.updateStatus(orderId, status);
         return ResponseEntity.ok(ApiResponse.success("Order status updated", response));
+    }
+
+    @PatchMapping("/{orderId}/ship")
+    public ResponseEntity<ApiResponse<OrderResponse>> shipOrder(@PathVariable String orderId,
+                                                                 @Valid @RequestBody ShipOrderRequest request) {
+        OrderResponse response = orderService.shipOrder(orderId, request.getTrackingNumber());
+        return ResponseEntity.ok(ApiResponse.success("Order shipped. Tracking email sent to customer.", response));
     }
 
     @GetMapping

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { getInventoryStats } from '../../api/adminService';
+import { getInventoryStats, updateProductStock } from '../../api/adminService';
 import Loader from '../../components/Loader';
+import toast from 'react-hot-toast';
 import {
   FiBox,
   FiAlertTriangle,
@@ -8,6 +9,10 @@ import {
   FiXCircle,
   FiSearch,
   FiDollarSign,
+  FiPlus,
+  FiX,
+  FiChevronUp,
+  FiChevronDown,
 } from 'react-icons/fi';
 
 const stockBadge = (status) => {
@@ -38,6 +43,11 @@ const AdminInventory = () => {
   const [error, setError] = useState('');
   const [filter, setFilter] = useState('ALL');
   const [search, setSearch] = useState('');
+  const [stockModal, setStockModal] = useState(null); // product object
+  const [stockQty, setStockQty] = useState('');
+  const [updatingStock, setUpdatingStock] = useState(false);
+  const [sortConfig, setSortConfig] = useState({ key: 'name', direction: 'asc' });
+
 
   useEffect(() => {
     fetchData();
@@ -52,6 +62,23 @@ const AdminInventory = () => {
       setError('Failed to load inventory data. Check backend connection.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleStockUpdate = async () => {
+    const qty = parseInt(stockQty);
+    if (!qty || qty < 1) { toast.error('Enter a valid quantity'); return; }
+    setUpdatingStock(true);
+    try {
+      await updateProductStock(stockModal.productId, qty);
+      toast.success(`+${qty} units added to ${stockModal.name}`);
+      setStockModal(null);
+      setStockQty('');
+      await fetchData();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to update stock.');
+    } finally {
+      setUpdatingStock(false);
     }
   };
 
@@ -75,17 +102,37 @@ const AdminInventory = () => {
     { label: 'Out of Stock', value: data?.outOfStockProducts || 0, icon: FiXCircle, color: 'text-red-400', bg: 'bg-red-500/10' },
   ];
 
-  const products = (data?.products || [])
-    .filter(p => {
-      if (filter === 'ALL') return true;
-      return p.stockStatus === filter;
-    })
+  const filtered = (data?.products || [])
+    .filter(p => filter === 'ALL' || p.stockStatus === filter)
     .filter(p =>
       search === '' ||
       p.name.toLowerCase().includes(search.toLowerCase()) ||
       p.productId.toLowerCase().includes(search.toLowerCase()) ||
       p.category.toLowerCase().includes(search.toLowerCase())
-    );
+    )
+    .sort((a, b) => {
+      if (!sortConfig.key) return 0;
+      let valA = a[sortConfig.key];
+      let valB = b[sortConfig.key];
+
+      if (valA < valB) return sortConfig.direction === 'asc' ? -1 : 1;
+      if (valA > valB) return sortConfig.direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+  const requestSort = (key) => {
+    let direction = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const getSortIcon = (key) => {
+    if (sortConfig.key !== key) return <FiChevronDown className="w-3 h-3 text-gray-700" />;
+    return sortConfig.direction === 'asc' ? <FiChevronUp className="w-3 h-3 text-primary-400" /> : <FiChevronDown className="w-3 h-3 text-primary-400" />;
+  };
+
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -152,22 +199,33 @@ const AdminInventory = () => {
           <table className="w-full text-sm">
             <thead>
               <tr className="text-gray-500 text-xs uppercase tracking-wider border-b border-white/5">
-                <th className="px-6 py-4 text-left font-medium">Product</th>
-                <th className="px-6 py-4 text-left font-medium hidden md:table-cell">Category</th>
-                <th className="px-6 py-4 text-left font-medium">Price</th>
-                <th className="px-6 py-4 text-left font-medium">Stock</th>
-                <th className="px-6 py-4 text-left font-medium">Status</th>
+                <th className="px-6 py-4 text-left font-medium cursor-pointer hover:text-white transition-colors" onClick={() => requestSort('name')}>
+                  <div className="flex items-center gap-1">Product {getSortIcon('name')}</div>
+                </th>
+                <th className="px-6 py-4 text-left font-medium hidden md:table-cell cursor-pointer hover:text-white transition-colors" onClick={() => requestSort('category')}>
+                  <div className="flex items-center gap-1">Category {getSortIcon('category')}</div>
+                </th>
+                <th className="px-6 py-4 text-left font-medium cursor-pointer hover:text-white transition-colors" onClick={() => requestSort('price')}>
+                  <div className="flex items-center gap-1">Price {getSortIcon('price')}</div>
+                </th>
+                <th className="px-6 py-4 text-left font-medium cursor-pointer hover:text-white transition-colors" onClick={() => requestSort('stock')}>
+                  <div className="flex items-center gap-1">Stock {getSortIcon('stock')}</div>
+                </th>
+                <th className="px-6 py-4 text-left font-medium cursor-pointer hover:text-white transition-colors" onClick={() => requestSort('stockStatus')}>
+                  <div className="flex items-center gap-1">Status {getSortIcon('stockStatus')}</div>
+                </th>
+                <th className="px-6 py-4 text-left font-medium">Update</th>
               </tr>
             </thead>
             <tbody>
-              {products.length === 0 ? (
+              {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
                     No products found matching your criteria.
                   </td>
                 </tr>
               ) : (
-                products.map((p, i) => (
+                filtered.map((p, i) => (
                   <tr key={i} className="border-b border-white/5 last:border-0 hover:bg-white/[0.03] transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
@@ -196,6 +254,14 @@ const AdminInventory = () => {
                         {stockLabel(p.stockStatus)}
                       </span>
                     </td>
+                    <td className="px-6 py-4">
+                      <button
+                        onClick={() => { setStockModal(p); setStockQty(''); }}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-primary-500/15 text-primary-400 border border-primary-500/20 hover:bg-primary-500/25 transition-all"
+                      >
+                        <FiPlus className="w-3.5 h-3.5" /> Add Stock
+                      </button>
+                    </td>
                   </tr>
                 ))
               )}
@@ -203,6 +269,52 @@ const AdminInventory = () => {
           </table>
         </div>
       </div>
+
+      {/* Stock Update Modal */}
+      {stockModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="glass-card w-full max-w-sm p-6 space-y-5 animate-fade-in">
+            <div className="flex items-center justify-between">
+              <h3 className="text-white font-heading text-lg font-semibold flex items-center gap-2">
+                <FiPlus className="text-primary-400" /> Add Stock
+              </h3>
+              <button onClick={() => setStockModal(null)} className="text-gray-500 hover:text-white"><FiX className="w-5 h-5" /></button>
+            </div>
+            <div className="bg-white/5 rounded-xl p-4">
+              <p className="text-white font-medium">{stockModal.name}</p>
+              <p className="text-gray-400 text-xs mt-1">Current stock: <span className="text-white font-semibold">{stockModal.stock}</span> units</p>
+            </div>
+            <div className="space-y-2">
+              <label className="text-gray-400 text-sm font-medium">New Stock Arrived (qty) <span className="text-red-400">*</span></label>
+              <input
+                id="stock-qty-input"
+                type="number"
+                min="1"
+                value={stockQty}
+                onChange={e => setStockQty(e.target.value)}
+                placeholder="e.g. 25"
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-primary-500/50 transition-all"
+                autoFocus
+              />
+              {stockQty && parseInt(stockQty) > 0 && (
+                <p className="text-green-400 text-xs">New total will be: {stockModal.stock + parseInt(stockQty)} units</p>
+              )}
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={handleStockUpdate}
+                disabled={!stockQty || parseInt(stockQty) < 1 || updatingStock}
+                id="confirm-stock-btn"
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold bg-primary-500/20 text-primary-400 border border-primary-500/30 hover:bg-primary-500/30 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+              >
+                {updatingStock ? <div className="w-4 h-4 border-2 border-primary-400/30 border-t-primary-400 rounded-full animate-spin" /> : <FiPlus className="w-4 h-4" />}
+                {updatingStock ? 'Updating...' : 'Update Stock'}
+              </button>
+              <button onClick={() => setStockModal(null)} className="px-4 py-3 rounded-xl text-sm text-gray-400 hover:text-white hover:bg-white/5 border border-transparent transition-all">Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

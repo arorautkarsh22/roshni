@@ -10,4 +10,5 @@ public interface AdminService {
     InventoryResponse getInventory();
     SalesAnalyticsResponse getSalesAnalytics();
     CustomerAnalyticsResponse getCustomerAnalytics();
+    void updateProductStock(String productId, int additionalStock);
 }

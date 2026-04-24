@@ -132,7 +132,30 @@ public class OrderServiceImpl implements OrderService {
         order = orderRepository.save(order);
 
         // Send status update email
-        emailService.sendOrderStatusUpdate(order.getId());
+        if (status == OrderStatus.DELIVERED) {
+            emailService.sendDeliveryNotification(order.getId());
+        } else {
+            emailService.sendOrderStatusUpdate(order.getId());
+        }
+
+        return mapToResponse(order);
+    }
+
+    @Override
+    public OrderResponse shipOrder(String orderId, String trackingNumber) {
+        Order order = orderRepository.findByOrderId(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order", "orderId", orderId));
+
+        if (order.getOrderStatus() != OrderStatus.CONFIRMED) {
+            throw new IllegalArgumentException("Only CONFIRMED orders can be shipped.");
+        }
+
+        order.setOrderStatus(OrderStatus.SHIPPED);
+        order.setTrackingNumber(trackingNumber);
+        order = orderRepository.save(order);
+
+        // Send tracking number email
+        emailService.sendShippingNotification(order.getId(), trackingNumber);
 
         return mapToResponse(order);
     }
@@ -173,6 +196,7 @@ public class OrderServiceImpl implements OrderService {
                 .orderStatus(order.getOrderStatus().name())
                 .paymentMethod(order.getPaymentMethod().name())
                 .paymentStatus(order.getPaymentStatus().name())
+                .trackingNumber(order.getTrackingNumber())
                 .items(items)
                 .orderDate(order.getOrderDate())
                 .build();
