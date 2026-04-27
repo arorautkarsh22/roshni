@@ -85,12 +85,12 @@ public class EmailServiceImpl implements EmailService {
     @Override
     @Async
     @Transactional(readOnly = true)
-    public void sendOrderStatusUpdate(Long id) {
+    public void sendOrderStatusUpdate(Long id, com.ssh.ecommerce.entity.enums.OrderStatus newStatus) {
         Order order = orderRepository.findById(id).orElse(null);
         if (order == null) return;
 
         String statusText;
-        switch (order.getOrderStatus()) {
+        switch (newStatus) {
             case SHIPPED -> statusText = "Your order has been shipped! 📦";
             case DELIVERED -> statusText = "Your order has been delivered! 🎉";
             case CANCELLED -> statusText = "Your order has been cancelled.";
@@ -103,13 +103,13 @@ public class EmailServiceImpl implements EmailService {
         String body = "Dear " + order.getUser().getName() + ",\n\n" +
                 statusText + "\n\n" +
                 "Order ID: " + order.getOrderId() + "\n" +
-                "Status: " + order.getOrderStatus().name() + "\n" +
+                "Status: " + newStatus.name() + "\n" +
                 "Total: ₹" + String.format("%.2f", order.getTotalAmount()) + "\n\n" +
                 "Track your order anytime on our website.\n\n" +
                 "With love,\nRoshni Creations ✨";
 
         saveAndSendEmail(order.getUser().getEmail(), subject, body,
-                "ORDER_" + order.getOrderStatus().name(), order.getOrderId());
+                "ORDER_" + newStatus.name(), order.getOrderId());
     }
 
     @Override

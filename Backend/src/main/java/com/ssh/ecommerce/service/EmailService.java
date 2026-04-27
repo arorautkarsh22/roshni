@@ -8,7 +8,7 @@ import java.util.Map;
 
 public interface EmailService {
     void sendOrderConfirmation(Long orderId);
-    void sendOrderStatusUpdate(Long orderId);
+    void sendOrderStatusUpdate(Long orderId, com.ssh.ecommerce.entity.enums.OrderStatus newStatus);
     void sendShippingNotification(Long orderId, String trackingNumber);
     void sendDeliveryNotification(Long orderId);
     void sendWelcomeEmail(User user);

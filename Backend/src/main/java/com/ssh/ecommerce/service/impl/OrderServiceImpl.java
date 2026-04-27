@@ -135,7 +135,7 @@ public class OrderServiceImpl implements OrderService {
         if (status == OrderStatus.DELIVERED) {
             emailService.sendDeliveryNotification(order.getId());
         } else {
-            emailService.sendOrderStatusUpdate(order.getId());
+            emailService.sendOrderStatusUpdate(order.getId(), status);
         }
 
         return mapToResponse(order);
