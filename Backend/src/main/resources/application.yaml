@@ -3,10 +3,10 @@ spring:
     name: ecommerce
 
   datasource:
-    url: ${DB_URL:jdbc:mysql://localhost:3306/roshni_creations?createDatabaseIfNotExist=true}
-    username: ${DB_USERNAME:root}
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/roshni_creations}
+    username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:2200}
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
@@ -15,7 +15,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        dialect: org.hibernate.dialect.MySQL8Dialect
+        dialect: org.hibernate.dialect.PostgreSQLDialect
 
   mail:
     host: smtp.gmail.com
