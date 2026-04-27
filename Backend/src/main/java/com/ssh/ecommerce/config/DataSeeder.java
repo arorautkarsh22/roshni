@@ -40,10 +40,17 @@ public class DataSeeder implements CommandLineRunner {
     public void run(String... args) {
         log.info("🛠️ Cleaning up legacy database columns...");
         try {
-            // Drop columns if they exist. Using multiple tries for safety.
-            try { jdbcTemplate.execute("ALTER TABLE payments DROP COLUMN razorpay_order_id"); } catch (Exception ignored) {}
-            try { jdbcTemplate.execute("ALTER TABLE payments DROP COLUMN razorpay_payment_id"); } catch (Exception ignored) {}
-            try { jdbcTemplate.execute("ALTER TABLE payments DROP COLUMN razorpay_signature"); } catch (Exception ignored) {}
+            // PostgreSQL-safe: only drop columns if table and column exist
+            jdbcTemplate.execute(
+                "DO $$ BEGIN " +
+                "IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='payments' AND column_name='razorpay_order_id') THEN " +
+                "ALTER TABLE payments DROP COLUMN razorpay_order_id; END IF; " +
+                "IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='payments' AND column_name='razorpay_payment_id') THEN " +
+                "ALTER TABLE payments DROP COLUMN razorpay_payment_id; END IF; " +
+                "IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='payments' AND column_name='razorpay_signature') THEN " +
+                "ALTER TABLE payments DROP COLUMN razorpay_signature; END IF; " +
+                "END $$;"
+            );
             log.info("✅ Database cleanup successful!");
         } catch (Exception e) {
             log.warn("⚠️ Database cleanup warning: {}", e.getMessage());
