@@ -133,7 +133,7 @@ const Register = () => {
 
           {/* Google Sign In */}
           <a
-            href="http://localhost:8080/oauth2/authorization/google"
+            href={`${import.meta.env.VITE_API_BASE_URL ? import.meta.env.VITE_API_BASE_URL.replace('/api', '') : 'http://localhost:8080'}/oauth2/authorization/google`}
             className="w-full flex items-center justify-center gap-3 bg-white/5 border border-white/10 rounded-xl px-6 py-3
                        text-white font-medium hover:bg-white/10 hover:border-white/20 transition-all duration-300"
           >
