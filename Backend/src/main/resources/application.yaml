@@ -3,9 +3,9 @@ spring:
     name: ecommerce
 
   datasource:
-    url: jdbc:mysql://localhost:3306/roshni_creations?createDatabaseIfNotExist=true
-    username: root
-    password: ${DATABASE_PASSWORD}
+    url: ${DB_URL:jdbc:mysql://localhost:3306/roshni_creations?createDatabaseIfNotExist=true}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:2200}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -57,4 +57,4 @@ jwt:
 
 app:
   frontend:
-    url: http://localhost:5173
+    url: ${FRONTEND_URL:http://localhost:5173}
